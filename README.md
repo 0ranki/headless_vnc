@@ -78,7 +78,7 @@ You will get a single always-on local desktop session to which you can login via
   After=display-manager.service
 
   [Service]
-  ExecStart=/usr/bin/x11vnc -display :0 -rfbauth /etc/x11vnc.pass -forever -loop
+  ExecStart=/usr/bin/x11vnc -display :0 -rfbauth /home/<username>/.vnc/passwd -forever -loop
   ExecStop=/usr/bin/killall x11vnc
   RemainAfterExit=true
 
