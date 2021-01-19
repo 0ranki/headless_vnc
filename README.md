@@ -34,8 +34,8 @@ You will get a single always-on local desktop session to which you can login via
 ### Make GDM use Xorg instead of Wayland:
 - edit `/etc/gdm/custom.conf` and uncomment the line `WaylandEnable = false`
 
-### Set up automatic login: [Arch wiki](https://wiki.archlinux.org/index.php/GDM#Automatic_login)
-- For GDM: (Ubuntu)
+### Set up automatic login: 
+- For GDM: (Ubuntu) [Arch wiki](https://wiki.archlinux.org/index.php/GDM#Automatic_login)
   - Under the `[Daemon]` section in `/etc/gdm/custom.conf`, add
   ```
   AutomaticLogin=username
