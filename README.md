@@ -89,5 +89,7 @@ You will get a single always-on local desktop session to which you can login via
 ##### Notes:
 - This gives you a Windows remote support like experience, where you log in to the "physical" session via VNC. If you tested the VNC connection with the monitor attached, you can see the mouse moving on the local screen and everything is "real time"
 - No multiple logins at a time this way
-- It's probably a good idea to experiment with the different flags x11vnc offers. For my use case the very basic one has been ok so far.
+- It's probably a good idea to experiment with the different flags x11vnc offers. For my use case these very basic ones have been ok so far.
+- There are better ways to handle the automatic starting, like systemd units, but this way the process runs as non-root and works quite consistently.
+- If you want to use the display managers login screen, see [the Arch wiki](https://wiki.archlinux.org/index.php/X11vnc), there are lots of tips there.
 - Share if you find this useful! There might be mistakes, please let me know and I'll fix them
