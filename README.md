@@ -92,4 +92,5 @@ You will get a single always-on local desktop session to which you can login via
 - It's probably a good idea to experiment with the different flags x11vnc offers. For my use case these very basic ones have been ok so far.
 - There are better ways to handle the automatic starting, like systemd units, but this way the process runs as non-root and works quite consistently.
 - If you want to use the display managers login screen, see [the Arch wiki](https://wiki.archlinux.org/index.php/X11vnc), there are lots of tips there.
+- DON'T log out. Disconnect the VNC client instead. If you log out, the VNC server is stopped and you'll have to reboot to get back to a graphical session. Maybe restarting your display manager via SSH might be enough, but I haven't tested it
 - Share if you find this useful! There might be mistakes, please let me know and I'll fix them
