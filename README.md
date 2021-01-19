@@ -1,5 +1,5 @@
 ### How to set up a Linux box with a persistent session and VNC access
-This is how I managed to set up a headless Linux server with VNC access. Instructions are adapted from [these instructions on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=680514371), [x11vnc man page](https://linux.die.net/man/1/x11vnc) and various tutorials/blog posts online
+This is how I managed to set up a headless Linux server with VNC access. Instructions are adapted from [these instructions on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=680514371), [x11vnc man page](https://linux.die.net/man/1/x11vnc), [Arch wiki page for x11vnc](https://wiki.archlinux.org/index.php/X11vnc) and various tutorials/blog posts online
 
 You will get a single always-on local desktop session to which you can login via VNC. No multiple sessions or users!
 
