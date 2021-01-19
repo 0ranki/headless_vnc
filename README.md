@@ -67,29 +67,21 @@ You will get a single always-on local desktop session to which you can login via
   - You can also set up the VNC to be encrypted, but I used a VPN (Wireguard)
 - Make sure at least port 5900 is open in your firewall. The server might be using other ports too, and the clients can autodetect the port, so it's a good idea to open ports 5900-5903.
 - Test:
-  - run `sudo x11vnc -rfbauth /home/<username>/.vnc/passwd`
+  - run `x11vnc -usepw`
   - connect from another machine using VNC client software of your choosing
   - there are other options for the VNC server, such as `-noxdamage`, but I haven't got so far as to try any of them out. You could probably improve performance a lot by experimenting with different options. The output of the above command gives good hints. Note that when you disconnect the VNC client, with the above command the VNC server terminates, and to connect again, it must be started again. We'll set up automatic starting next
-- Once you have tested that the connection works, create a systemd service file to `/etc/systemd/system/x11vnc.service`. The file name can be anything you want, as long as the extension is `.service`:
+- Once you have tested that the server and connecting to it works, create an autostart desktop file `~/.config/autostart/x11vnc.desktop`:
   ```
-  [Unit]
-  Description="x11vnc"
-  Requires=display-manager.service
-  After=display-manager.service
-
-  [Service]
-  ExecStart=/usr/bin/x11vnc -display :0 -rfbauth /home/<username>/.vnc/passwd -forever -loop
-  ExecStop=/usr/bin/killall x11vnc
-  RemainAfterExit=true
-
-  [Install]
-  WantedBy=graphical.target
+  [Desktop Entry]
+  Name=x11vnc
+  Comment=VNC server
+  Exec=/usr/bin/x11vnc -usepw -loop -forever
+  Type=Application
+  NoDisplay=true
+  X-GNOME-Autostart-enabled=true
   ```
-  - note the `-forever` and `-loop` options, `-forever` makes the server not quit when the client connection is closed, and `-loop` makes the server try restarting even if the X server is terminated/restarted. Add any other useful options you want.
-- run `sudo systemctl daemon-reload` to load the new unit file
-- run `sudo systemctl enable --now x11vnc` to enable the service on reboot and start it immediately (stop the server you started from the command line first)
+- Reboot
 - Test that the connection is working
-- Reboot and test again
 
 - Shut down, disconnect the monitor and peripherals and power on, then test that everything is working
 
