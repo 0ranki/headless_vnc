@@ -80,6 +80,7 @@ You will get a single always-on local desktop session to which you can login via
   NoDisplay=true
   X-GNOME-Autostart-enabled=true
   ```
+  - note the `-forever` and `-loop` options, `-forever` makes the server not quit when the client connection is closed, and `-loop` makes the server try restarting even if the X server is terminated/restarted. Add any other useful options you want.
 - Reboot
 - Test that the connection is working
 
