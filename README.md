@@ -28,18 +28,21 @@ You will get a single always-on local desktop session to which you can login via
 - Edit (create) `/etc/X11/Xwrapper.config`:
   - add the line `allowed_users=anybody`
   - this will allow the X session to be started anywhere, It seems this is necessary to start X without an attached display. You can try without it too.
+  
+- You can disconnect the monitor at this stage if you want, but for troubleshooting it's better to keep it connected
 
 ### Make GDM use Xorg instead of Wayland:
 - edit `/etc/gdm/custom.conf` and uncomment the line `WaylandEnable = false`
 
 ### Set up automatic login: [Arch wiki](https://wiki.archlinux.org/index.php/GDM#Automatic_login)
 - For GDM: (Ubuntu)
-  - Under the `[Daemon]` section, add
+  - Under the `[Daemon]` section in `/etc/gdm/custom.conf`, add
   ```
   AutomaticLogin=username
   AutomaticLoginEnable=True
   ```
   - replace `username` with your username
+  - you can also do this from the GUI if you still have the monitor attached
   - edit `/var/lib/AccountsService/users/<username>` and make sure the `XSession=<your preferred DE>` is correct. The possible sessions are in `/usr/share/xsessions`, use one of those without the `.desktop` extension. This should be correct if you have only one DE installed.
 
 - For SDDM: [Arch wiki](https://wiki.archlinux.org/index.php/SDDM#Autologin)
@@ -54,7 +57,7 @@ You will get a single always-on local desktop session to which you can login via
 - For other DMs you can find instructions online
 
 ### Test that everything is working so far
-- Reboot and see that you get logged in correctly to an Xorg session with the display still connected
+- Reboot and see that you get logged in correctly to an Xorg session with the display still connected. If you already disconnected the monitor, SSH in and check that your user is logged in on tty :0
 
 ### Set up `x11vnc`
 - install `x11vnc` if you haven't already
@@ -62,5 +65,37 @@ You will get a single always-on local desktop session to which you can login via
   - run `x11vnc -storepasswd` as your regular user
   - <b>Please note that VNC is by default unencrypted! If you use this over the internet, I suggest using a VPN connection or tunneling over SSH</b>
   - You can also set up the VNC to be encrypted, but I used a VPN (Wireguard)
+- Make sure at least port 5900 is open in your firewall. The server might be using other ports too, and the clients can autodetect the port, so it's a good idea to open ports 5900-5903.
 - Test:
-  - run `sudo x11vnc -auth passwd
+  - run `sudo x11vnc -rfbauth /home/<username>/.vnc/passwd`
+  - connect from another machine using VNC client software of your choosing
+  - there are other options for the VNC server, such as `-noxdamage`, but I haven't got so far as to try any of them out. You could probably improve performance a lot by experimenting with different options. The output of the above command gives good hints. Note that when you disconnect the VNC client, with the above command the VNC server terminates, and to connect again, it must be started again. We'll set up automatic starting next
+- Once you have tested that the connection works, create a systemd service file to `/etc/systemd/system/x11vnc.service`. The file name can be anything you want, as long as the extension is `.service`:
+  ```
+  [Unit]
+  Description="x11vnc"
+  Requires=display-manager.service
+  After=display-manager.service
+
+  [Service]
+  ExecStart=/usr/bin/x11vnc -display :0 -rfbauth /etc/x11vnc.pass -forever -loop
+  ExecStop=/usr/bin/killall x11vnc
+  RemainAfterExit=true
+
+  [Install]
+  WantedBy=graphical.target
+  ```
+  - note the `-forever` and `-loop` options, `-forever` makes the server not quit when the client connection is closed, and `-loop` makes the server try restarting even if the X server is terminated/restarted. Add any other useful options you want.
+- run `sudo systemctl daemon-reload` to load the new unit file
+- run `sudo systemctl enable --now x11vnc` to enable the service on reboot and start it immediately (stop the server you started from the command line first)
+- Test that the connection is working
+- Reboot and test again
+
+- Shut down, disconnect the monitor and peripherals and power on, then test that everything is working
+
+
+##### Notes:
+- This gives you a Windows remote support like experience, where you log in to the "physical" session via VNC. If you tested the VNC connection with the monitor attached, you can see the mouse moving on the local screen and everything is "real time"
+- No multiple logins at a time this way
+- It's probably a good idea to experiment with the different flags x11vnc offers. For my use case the very basic one has been ok so far.
+- Share if you find this useful! There might be mistakes, please let me know and I'll fix them
